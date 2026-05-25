@@ -1,10 +1,14 @@
 /**
- * Demo registry — single source of truth for the 10 lab demos.
+ * Demo registry — single source of truth for the 10 lab systems.
+ *
+ * Each demo is a *real business system* (booking flow, CRM, intake form,
+ * dashboard, automation pipeline, etc.) elevated with the WebGL, shader,
+ * and motion craft most agencies never ship. The whole point: prove that
+ * the stuff ReachFlow builds for clients can feel alive without sacrificing
+ * the speed, accessibility, and reliability that production systems demand.
  *
  * Each demo lives at `/lab/<slug>` and is dynamically imported per route
- * to keep the per-page JS budget under 200KB on first load.
- *
- * The landing page reads from this registry to build the demo grid.
+ * to keep per-page JS under 200KB on first load.
  */
 
 export type DemoStatus = 'placeholder' | 'wip' | 'shipped';
@@ -20,7 +24,9 @@ export interface Demo {
   title: string;
   /** One-line description shown in the demo grid */
   tagline: string;
-  /** What technique this demo teaches */
+  /** The real business system this demo represents */
+  system: string;
+  /** What technique elevates the system */
   technique: string;
   /** Inspiration source/credit */
   inspiration: string;
@@ -36,124 +42,134 @@ export interface Demo {
 
 export const DEMOS: ReadonlyArray<Demo> = [
   {
-    slug: 'lenis-text-reveal',
+    slug: 'booking-flow',
     ordinal: '01',
-    title: 'Lenis Text Reveal',
-    tagline: 'Smooth scroll meets staggered text reveal.',
-    technique: 'Lenis + GSAP ScrollTrigger + SplitText stagger',
-    inspiration: 'basementstudio/scrollytelling',
+    title: 'Booking Flow',
+    tagline: 'A booking experience that earns the appointment instead of begging for it.',
+    system: 'Multi-step appointment booking — service, staff, time, confirm',
+    technique: 'Lenis smooth scroll + GSAP ScrollTrigger + SplitText staggered reveals',
+    inspiration: 'Esthetics by Seneca booking, basementstudio/scrollytelling',
     track: 'react-pro',
     wave: 2,
     status: 'placeholder',
-    tags: ['scroll', 'typography', 'gsap'],
+    tags: ['booking', 'scroll', 'typography'],
   },
   {
-    slug: 'cursor-morph',
+    slug: 'cursor-aware-crm',
     ordinal: '02',
-    title: 'Cursor Morph',
-    tagline: 'A custom cursor that morphs on hoverable elements.',
-    technique: 'pointer tracking + spring physics + context-aware shape',
+    title: 'Cursor-Aware CRM',
+    tagline: 'A CRM that tells you what you can do, before you do it.',
+    system: 'Sales pipeline CRM — contact cards, deal stages, charts, drag-drop',
+    technique: 'pointer tracking + spring physics + context-aware cursor shapes per element',
     inspiration: 'basement website-2k25',
     track: 'react-pro',
     wave: 2,
     status: 'placeholder',
-    tags: ['cursor', 'interaction', 'spring'],
+    tags: ['crm', 'cursor', 'interaction'],
   },
   {
-    slug: 'shader-noise-hero',
+    slug: 'shader-dashboard-hero',
     ordinal: '03',
-    title: 'Shader Noise Hero',
-    tagline: 'Fragment-shader gradient hero, mouse-reactive noise.',
-    technique: 'GLSL fragment shader + simplex noise + uMouse uniform',
+    title: 'Shader Dashboard Hero',
+    tagline: 'A dashboard hero card that actually looks like the data is alive.',
+    system: 'SaaS analytics dashboard — KPI cards, live metrics, sparklines',
+    technique: 'GLSL fragment shader + simplex noise + uniforms driven by live metric values',
     inspiration: 'basementstudio/shader-lab',
     track: 'frontend-developer',
     wave: 2,
-    status: 'placeholder',
-    tags: ['shader', 'webgl', 'hero'],
+    status: 'wip',
+    tags: ['dashboard', 'shader', 'webgl'],
   },
   {
-    slug: 'page-transitions',
+    slug: 'portal-transitions',
     ordinal: '04',
-    title: 'Page Transitions',
-    tagline: 'Cinematic route transitions, View Transitions API first.',
+    title: 'Portal Transitions',
+    tagline: 'Section-to-section transitions that feel like a product tour, not a website.',
+    system: 'SaaS marketing site — landing → features → pricing → contact',
     technique: 'View Transitions API + GSAP fallback + shared element morph',
     inspiration: 'basement website-2k25',
     track: 'nextjs-pro',
     wave: 2,
     status: 'placeholder',
-    tags: ['transitions', 'routing', 'view-transitions'],
+    tags: ['transitions', 'routing', 'saas'],
   },
   {
-    slug: 'scroll-distort-text',
+    slug: 'intake-form-warp',
     ordinal: '05',
-    title: 'Scroll Distort Text',
-    tagline: 'Display text warps under scroll velocity.',
-    technique: 'scroll velocity uniform → vertex shader warp on text mesh',
+    title: 'Intake Form Warp',
+    tagline: 'Lead intake that doesn’t feel like another Typeform clone.',
+    system: 'Multi-step lead intake form with conditional logic and a real submit',
+    technique: 'scroll-velocity uniform warping header text + fluid SVG progress indicator',
     inspiration: 'basement-laboratory rgb-text-glitch',
     track: 'react-pro',
     wave: 2,
     status: 'placeholder',
-    tags: ['scroll', 'shader', 'typography'],
+    tags: ['intake', 'forms', 'shader'],
   },
   {
-    slug: '3d-marquee',
+    slug: 'client-logo-marquee',
     ordinal: '06',
-    title: '3D Marquee',
-    tagline: 'Infinite logo strip, perspective-skewed, scroll-tied.',
-    technique: 'CSS 3D transform + GSAP scroll-linked velocity',
+    title: 'Client Logo Marquee',
+    tagline: 'Social proof that pulls your eye instead of begging for it.',
+    system: 'Agency social-proof strip — client logos, case-study hover affordances',
+    technique: 'CSS 3D transform + GSAP scroll-linked velocity + perspective skew',
     inspiration: 'basement website-2k25 brand-marquee',
     track: 'react-pro',
     wave: 3,
-    status: 'placeholder',
-    tags: ['marquee', '3d', 'scroll'],
+    status: 'wip',
+    tags: ['marquee', 'social-proof', 'scroll'],
   },
   {
-    slug: 'fluid-cursor',
+    slug: 'fluid-pricing-cursor',
     ordinal: '07',
-    title: 'Fluid Cursor',
-    tagline: 'WebGL fluid sim chasing the pointer.',
-    technique: 'Navier-Stokes fragment shader + ping-pong FBO',
+    title: 'Fluid Pricing Cursor',
+    tagline: 'A pricing page that highlights what your eye is already drawn to.',
+    system: 'SaaS pricing page — 3 tiers, comparison rows, primary CTA',
+    technique: 'Navier-Stokes WebGL fluid sim + ping-pong FBO chasing the pointer',
     inspiration: 'PavelDoGreat WebGL-Fluid-Simulation',
     track: 'frontend-developer',
     wave: 3,
     status: 'placeholder',
-    tags: ['shader', 'simulation', 'cursor'],
+    tags: ['pricing', 'shader', 'simulation'],
   },
   {
-    slug: 'particle-logo',
+    slug: 'automation-pipeline',
     ordinal: '08',
-    title: 'Particle Logo',
-    tagline: 'Particles resolve into the ReachFlow wordmark on scroll.',
-    technique: 'GPU particle field + scroll-driven target morph + InstancedMesh',
+    title: 'Automation Pipeline',
+    tagline: 'Watch your workflow run — particles travel the route your data takes.',
+    system: 'n8n-style automation visualization — trigger → enrich → route → notify',
+    technique: 'GPU particle field + scroll-driven node-to-node morph + InstancedMesh',
     inspiration: 'basement-laboratory particle-logo + custom',
     track: 'react-pro',
     wave: 3,
     status: 'placeholder',
-    tags: ['particles', 'r3f', 'scroll'],
+    tags: ['automation', 'particles', 'r3f'],
   },
   {
-    slug: 'glsl-tunnel',
+    slug: 'data-tunnel',
     ordinal: '09',
-    title: 'GLSL Tunnel',
-    tagline: 'Pure ray-marched tunnel, scroll controls the camera.',
-    technique: 'full-screen quad + ray-marched SDF tunnel + scroll uTime',
+    title: 'Data Tunnel',
+    tagline: 'A cinematic intro for a case study, ray-marched in pure GLSL.',
+    system: 'Case-study hero — “here’s the data flowing through your systems”',
+    technique: 'full-screen quad + ray-marched SDF tunnel + scroll-driven uTime',
     inspiration: 'Shadertoy / kishimisu Pi-tunnel',
     track: 'frontend-developer',
     wave: 3,
     status: 'placeholder',
-    tags: ['shader', 'raymarch', 'glsl'],
+    tags: ['case-study', 'raymarch', 'glsl'],
   },
   {
-    slug: 'physics-cards',
+    slug: 'inventory-physics',
     ordinal: '10',
-    title: 'Physics Cards',
-    tagline: 'Project cards you can drag, fling, and watch settle.',
+    title: 'Inventory Physics',
+    tagline: 'Drag, fling, and recategorize — inventory that actually feels good to use.',
+    system: 'Field-service inventory tool — drag-drop cards, status piles, undo',
     technique: 'rapier rigid bodies + drag constraints + DOM-rendered cards',
-    inspiration: 'pmndrs/react-rapier examples',
+    inspiration: 'Beecroft Pools inventory + pmndrs/react-rapier examples',
     track: 'react-pro',
     wave: 3,
     status: 'placeholder',
-    tags: ['physics', 'interaction', 'rapier'],
+    tags: ['inventory', 'physics', 'interaction'],
   },
 ] as const;
 

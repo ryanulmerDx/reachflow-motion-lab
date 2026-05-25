@@ -3,17 +3,20 @@
  */
 
 export const SITE = {
-  name: 'ReachFlow Motion Lab',
-  shortName: 'Motion Lab',
-  tagline: '10 open-source WebGL, shader, and motion experiments. Built by a solo agency.',
+  name: 'ReachFlow Systems Lab',
+  shortName: 'Systems Lab',
+  tagline:
+    'Ten business systems built the way they should feel — fast, sharp, and visually alive.',
   description:
-    'A public playground of WebGL, shader, and motion experiments — every demo standalone, screen-recordable, and open source under MIT. Built by ReachFlow Studio.',
+    'A working portfolio of business systems — booking, CRM, intake, dashboards, automation — wrapped in the WebGL, shader, and motion craft most agencies never ship. Open source under MIT. Built by ReachFlow Studio.',
   url: 'https://lab.reachflowstudio.com',
   ogImage: '/og/default.png',
   studio: {
     name: 'ReachFlow Studio',
     url: 'https://reachflowstudio.com',
     contact: 'ryan@reachflowstudio.com',
+    pitch:
+      'ReachFlow Studio builds production systems — booking flows, CRMs, automated pipelines, custom dashboards — for solo operators and small teams who want enterprise polish without the enterprise headcount.',
   },
   repo: 'https://github.com/ryanulmerDx/reachflow-motion-lab',
   socials: {

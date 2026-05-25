@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { DEMOS, findDemo } from '@/lib/demo-registry';
+import { hasDemoImpl } from '@/lib/demo-impls';
+import { DemoImpl } from '@/components/demo-impl';
 import { SITE } from '@/lib/site';
 
 type Params = { slug: string };
@@ -33,6 +35,8 @@ export default async function DemoPage({ params }: { params: Promise<Params> }) 
   const demo = findDemo(slug);
   if (!demo) notFound();
 
+  if (hasDemoImpl(slug)) return <DemoImpl slug={slug} />;
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col justify-center px-6 py-32">
       <p className="font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
@@ -44,7 +48,13 @@ export default async function DemoPage({ params }: { params: Promise<Params> }) 
       <p className="mt-6 max-w-2xl text-lg text-[var(--color-ink-dim)] md:text-xl">
         {demo.tagline}
       </p>
-      <dl className="mt-12 grid grid-cols-1 gap-6 border-t border-white/5 pt-10 md:grid-cols-3">
+      <dl className="mt-12 grid grid-cols-1 gap-6 border-t border-white/5 pt-10 md:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
+            System
+          </dt>
+          <dd className="mt-2">{demo.system}</dd>
+        </div>
         <div>
           <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
             Technique

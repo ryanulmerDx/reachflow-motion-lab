@@ -1,6 +1,6 @@
-# Roadmap — reachflow-motion-lab
+# Roadmap — ReachFlow Systems Lab
 
-> 21-day plan, five waves, ten demos. Source: `REACHFLOW_MOTION_LAB_KICKOFF.md`.
+> 21-day plan, five waves, ten **systems** (booking, CRM, intake, dashboard, automation, etc.) each wrapped in WebGL/shader/motion craft. The wave plan and acceptance gates below stay the same — the framing is "business systems with motion polish," not generic motion demos. Source: `REACHFLOW_MOTION_LAB_KICKOFF.md`.
 
 Last updated: 2026-05-25.
 
