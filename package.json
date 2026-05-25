@@ -1,0 +1,71 @@
+{
+  "name": "reachflow-motion-lab",
+  "version": "0.1.0",
+  "private": false,
+  "description": "An open-source playground of WebGL, shader, and motion experiments. Built by ReachFlow Studio.",
+  "license": "MIT",
+  "homepage": "https://lab.reachflowstudio.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryanulmerDx/reachflow-motion-lab.git"
+  },
+  "author": {
+    "name": "ReachFlow Studio",
+    "url": "https://reachflowstudio.com"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky || true"
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.171.0",
+    "@react-three/fiber": "^9.0.0",
+    "@react-three/drei": "^10.0.4",
+    "ogl": "^1.0.11",
+    "gsap": "^3.12.5",
+    "@gsap/react": "^2.1.2",
+    "lenis": "^1.1.20",
+    "framer-motion": "^11.15.0",
+    "@bsmnt/scrollytelling": "^0.3.3",
+    "@sentry/nextjs": "^9.1.0",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@types/three": "^0.171.0",
+    "typescript": "^5.7.3",
+    "eslint": "^9.18.0",
+    "@eslint/eslintrc": "^3.2.0",
+    "eslint-config-next": "^15.5.4",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.5.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.0",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@lhci/cli": "^0.14.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,mdx,css,glsl}": [
+      "prettier --write"
+    ]
+  }
+}
