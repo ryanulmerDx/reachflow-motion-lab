@@ -9,6 +9,7 @@
 
 export type DemoStatus = 'placeholder' | 'wip' | 'shipped';
 export type DemoTrack = 'react-pro' | 'nextjs-pro' | 'frontend-developer' | 'ui-designer';
+export type DemoWave = 2 | 3;
 
 export interface Demo {
   /** URL slug — `/lab/<slug>` */
@@ -25,6 +26,8 @@ export interface Demo {
   inspiration: string;
   /** Which build track owns this demo */
   track: DemoTrack;
+  /** Which wave the demo ships in (Wave 2 = demos 1-5, Wave 3 = demos 6-10) */
+  wave: DemoWave;
   /** Shipping status */
   status: DemoStatus;
   /** Tags for filtering */
@@ -40,6 +43,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'Lenis + GSAP ScrollTrigger + SplitText stagger',
     inspiration: 'basementstudio/scrollytelling',
     track: 'react-pro',
+    wave: 2,
     status: 'placeholder',
     tags: ['scroll', 'typography', 'gsap'],
   },
@@ -51,6 +55,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'pointer tracking + spring physics + context-aware shape',
     inspiration: 'basement website-2k25',
     track: 'react-pro',
+    wave: 2,
     status: 'placeholder',
     tags: ['cursor', 'interaction', 'spring'],
   },
@@ -62,6 +67,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'GLSL fragment shader + simplex noise + uMouse uniform',
     inspiration: 'basementstudio/shader-lab',
     track: 'frontend-developer',
+    wave: 2,
     status: 'placeholder',
     tags: ['shader', 'webgl', 'hero'],
   },
@@ -73,6 +79,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'View Transitions API + GSAP fallback + shared element morph',
     inspiration: 'basement website-2k25',
     track: 'nextjs-pro',
+    wave: 2,
     status: 'placeholder',
     tags: ['transitions', 'routing', 'view-transitions'],
   },
@@ -84,6 +91,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'scroll velocity uniform → vertex shader warp on text mesh',
     inspiration: 'basement-laboratory rgb-text-glitch',
     track: 'react-pro',
+    wave: 2,
     status: 'placeholder',
     tags: ['scroll', 'shader', 'typography'],
   },
@@ -95,6 +103,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'CSS 3D transform + GSAP scroll-linked velocity',
     inspiration: 'basement website-2k25 brand-marquee',
     track: 'react-pro',
+    wave: 3,
     status: 'placeholder',
     tags: ['marquee', '3d', 'scroll'],
   },
@@ -106,6 +115,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'Navier-Stokes fragment shader + ping-pong FBO',
     inspiration: 'PavelDoGreat WebGL-Fluid-Simulation',
     track: 'frontend-developer',
+    wave: 3,
     status: 'placeholder',
     tags: ['shader', 'simulation', 'cursor'],
   },
@@ -117,6 +127,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'GPU particle field + scroll-driven target morph + InstancedMesh',
     inspiration: 'basement-laboratory particle-logo + custom',
     track: 'react-pro',
+    wave: 3,
     status: 'placeholder',
     tags: ['particles', 'r3f', 'scroll'],
   },
@@ -128,6 +139,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'full-screen quad + ray-marched SDF tunnel + scroll uTime',
     inspiration: 'Shadertoy / kishimisu Pi-tunnel',
     track: 'frontend-developer',
+    wave: 3,
     status: 'placeholder',
     tags: ['shader', 'raymarch', 'glsl'],
   },
@@ -139,6 +151,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     technique: 'rapier rigid bodies + drag constraints + DOM-rendered cards',
     inspiration: 'pmndrs/react-rapier examples',
     track: 'react-pro',
+    wave: 3,
     status: 'placeholder',
     tags: ['physics', 'interaction', 'rapier'],
   },

@@ -16,7 +16,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const demo = findDemo(slug);
-  if (!demo) return {};
+  if (!demo) return { title: 'Not found', robots: { index: false } };
   return {
     title: demo.title,
     description: demo.tagline,
@@ -65,7 +65,7 @@ export default async function DemoPage({ params }: { params: Promise<Params> }) 
         </div>
       </dl>
       <p className="mt-16 font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
-        Scaffolded. Implementation lands in Wave {demo.ordinal === '01' || demo.ordinal === '02' || demo.ordinal === '03' || demo.ordinal === '04' || demo.ordinal === '05' ? '2' : '3'}.
+        Scaffolded. Implementation lands in Wave {demo.wave}.
       </p>
     </main>
   );
