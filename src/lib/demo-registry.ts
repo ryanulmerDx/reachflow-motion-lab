@@ -51,7 +51,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'Esthetics by Seneca booking, basementstudio/scrollytelling',
     track: 'react-pro',
     wave: 2,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['booking', 'scroll', 'typography'],
   },
   {

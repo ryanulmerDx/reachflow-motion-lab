@@ -19,6 +19,7 @@
  */
 
 export const IMPLEMENTED_SLUGS = new Set<string>([
+  'booking-flow',
   'shader-dashboard-hero',
   'client-logo-marquee',
 ]);

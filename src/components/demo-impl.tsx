@@ -18,6 +18,10 @@ import type { ComponentType } from 'react';
 type DemoComponent = ComponentType<Record<string, never>>;
 
 const IMPLS: Readonly<Record<string, DemoComponent>> = {
+  'booking-flow': dynamic(
+    () => import('@/app/lab/_demos/01-booking-flow'),
+    { ssr: false }
+  ),
   'shader-dashboard-hero': dynamic(
     () => import('@/app/lab/_demos/03-shader-dashboard-hero'),
     { ssr: false }
