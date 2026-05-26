@@ -64,7 +64,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement website-2k25',
     track: 'react-pro',
     wave: 2,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['crm', 'cursor', 'interaction'],
   },
   {
@@ -90,7 +90,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement website-2k25',
     track: 'nextjs-pro',
     wave: 2,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['transitions', 'routing', 'saas'],
   },
   {
@@ -103,7 +103,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement-laboratory rgb-text-glitch',
     track: 'react-pro',
     wave: 2,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['intake', 'forms', 'shader'],
   },
   {

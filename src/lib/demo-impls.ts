@@ -20,7 +20,10 @@
 
 export const IMPLEMENTED_SLUGS = new Set<string>([
   'booking-flow',
+  'cursor-aware-crm',
   'shader-dashboard-hero',
+  'portal-transitions',
+  'intake-form-warp',
   'client-logo-marquee',
 ]);
 

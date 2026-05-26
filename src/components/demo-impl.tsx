@@ -22,8 +22,20 @@ const IMPLS: Readonly<Record<string, DemoComponent>> = {
     () => import('@/app/lab/_demos/01-booking-flow'),
     { ssr: false }
   ),
+  'cursor-aware-crm': dynamic(
+    () => import('@/app/lab/_demos/02-cursor-aware-crm'),
+    { ssr: false }
+  ),
   'shader-dashboard-hero': dynamic(
     () => import('@/app/lab/_demos/03-shader-dashboard-hero'),
+    { ssr: false }
+  ),
+  'portal-transitions': dynamic(
+    () => import('@/app/lab/_demos/04-portal-transitions'),
+    { ssr: false }
+  ),
+  'intake-form-warp': dynamic(
+    () => import('@/app/lab/_demos/05-intake-form-warp'),
     { ssr: false }
   ),
   'client-logo-marquee': dynamic(
