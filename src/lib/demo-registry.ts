@@ -51,7 +51,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'Esthetics by Seneca booking, basementstudio/scrollytelling',
     track: 'react-pro',
     wave: 2,
-    status: 'wip',
+    status: 'shipped',
     tags: ['booking', 'scroll', 'typography'],
   },
   {
@@ -64,7 +64,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement website-2k25',
     track: 'react-pro',
     wave: 2,
-    status: 'wip',
+    status: 'shipped',
     tags: ['crm', 'cursor', 'interaction'],
   },
   {
@@ -77,7 +77,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basementstudio/shader-lab',
     track: 'frontend-developer',
     wave: 2,
-    status: 'wip',
+    status: 'shipped',
     tags: ['dashboard', 'shader', 'webgl'],
   },
   {
@@ -90,7 +90,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement website-2k25',
     track: 'nextjs-pro',
     wave: 2,
-    status: 'wip',
+    status: 'shipped',
     tags: ['transitions', 'routing', 'saas'],
   },
   {
@@ -103,7 +103,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement-laboratory rgb-text-glitch',
     track: 'react-pro',
     wave: 2,
-    status: 'wip',
+    status: 'shipped',
     tags: ['intake', 'forms', 'shader'],
   },
   {
@@ -116,7 +116,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement website-2k25 brand-marquee',
     track: 'react-pro',
     wave: 3,
-    status: 'wip',
+    status: 'shipped',
     tags: ['marquee', 'social-proof', 'scroll'],
   },
   {
@@ -129,7 +129,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'PavelDoGreat WebGL-Fluid-Simulation',
     track: 'frontend-developer',
     wave: 3,
-    status: 'wip',
+    status: 'shipped',
     tags: ['pricing', 'shader', 'simulation'],
   },
   {
@@ -142,7 +142,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement-laboratory particle-logo + custom',
     track: 'react-pro',
     wave: 3,
-    status: 'wip',
+    status: 'shipped',
     tags: ['automation', 'particles', 'r3f'],
   },
   {
@@ -155,7 +155,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'Shadertoy / kishimisu Pi-tunnel',
     track: 'frontend-developer',
     wave: 3,
-    status: 'wip',
+    status: 'shipped',
     tags: ['case-study', 'raymarch', 'glsl'],
   },
   {
@@ -168,7 +168,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'Beecroft Pools inventory + pmndrs/react-rapier examples',
     track: 'react-pro',
     wave: 3,
-    status: 'wip',
+    status: 'shipped',
     tags: ['inventory', 'physics', 'interaction'],
   },
 ] as const;

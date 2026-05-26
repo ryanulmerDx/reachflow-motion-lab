@@ -1,3 +1,35 @@
+/**
+ * Content Security Policy for a public, no-auth WebGL portfolio.
+ *
+ * Permissive script-src is necessary:
+ *   - `'unsafe-eval'` — Rapier WASM bootstrap + some R3F dynamic codegen
+ *   - `'unsafe-inline'` — Next.js hydration uses inline bootstrap scripts;
+ *     using nonces would require a middleware and isn't worth it for a
+ *     static portfolio with no user-input attack surface.
+ *
+ * Style-src needs `'unsafe-inline'` for drei `<Html>`, Tailwind 4 runtime
+ * style insertion, GSAP transform style writes, and `viewTransitionName`
+ * inline styles.
+ *
+ * worker-src `blob:` is required for Rapier's WebAssembly worker.
+ * connect-src includes Sentry; expand if other telemetry is added later.
+ */
+const CSP_DIRECTIVES = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.sentry.io",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://*.sentry.io https://*.ingest.sentry.io",
+  "worker-src 'self' blob:",
+  "media-src 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  "base-uri 'self'",
+  "upgrade-insecure-requests",
+].join('; ');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -18,6 +50,7 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
+          { key: 'Content-Security-Policy', value: CSP_DIRECTIVES },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-XSS-Protection', value: '0' },
