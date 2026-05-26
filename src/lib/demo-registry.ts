@@ -129,7 +129,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'PavelDoGreat WebGL-Fluid-Simulation',
     track: 'frontend-developer',
     wave: 3,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['pricing', 'shader', 'simulation'],
   },
   {
@@ -142,7 +142,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'basement-laboratory particle-logo + custom',
     track: 'react-pro',
     wave: 3,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['automation', 'particles', 'r3f'],
   },
   {
@@ -155,7 +155,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'Shadertoy / kishimisu Pi-tunnel',
     track: 'frontend-developer',
     wave: 3,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['case-study', 'raymarch', 'glsl'],
   },
   {
@@ -168,7 +168,7 @@ export const DEMOS: ReadonlyArray<Demo> = [
     inspiration: 'Beecroft Pools inventory + pmndrs/react-rapier examples',
     track: 'react-pro',
     wave: 3,
-    status: 'placeholder',
+    status: 'wip',
     tags: ['inventory', 'physics', 'interaction'],
   },
 ] as const;

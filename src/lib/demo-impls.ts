@@ -25,6 +25,10 @@ export const IMPLEMENTED_SLUGS = new Set<string>([
   'portal-transitions',
   'intake-form-warp',
   'client-logo-marquee',
+  'fluid-pricing-cursor',
+  'automation-pipeline',
+  'data-tunnel',
+  'inventory-physics',
 ]);
 
 export function hasDemoImpl(slug: string): boolean {

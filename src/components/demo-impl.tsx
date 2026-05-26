@@ -42,6 +42,22 @@ const IMPLS: Readonly<Record<string, DemoComponent>> = {
     () => import('@/app/lab/_demos/06-client-logo-marquee'),
     { ssr: false }
   ),
+  'fluid-pricing-cursor': dynamic(
+    () => import('@/app/lab/_demos/07-fluid-pricing-cursor'),
+    { ssr: false }
+  ),
+  'automation-pipeline': dynamic(
+    () => import('@/app/lab/_demos/08-automation-pipeline'),
+    { ssr: false }
+  ),
+  'data-tunnel': dynamic(
+    () => import('@/app/lab/_demos/09-data-tunnel'),
+    { ssr: false }
+  ),
+  'inventory-physics': dynamic(
+    () => import('@/app/lab/_demos/10-inventory-physics'),
+    { ssr: false }
+  ),
 };
 
 export function DemoImpl({ slug }: { slug: string }) {
