@@ -55,3 +55,26 @@ html.lenis body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
+/* Landing marquee — infinite horizontal scroll. */
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-33.3333%, 0, 0);
+  }
+}
+
+/* Chapter ordinal — subtle outline on hover for the giant numerals. */
+.chapter-ordinal {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-ink-dim);
+  transition: -webkit-text-stroke-color 0.4s ease, color 0.4s ease;
+}
+
+.chapter-row:hover .chapter-ordinal,
+.chapter-row:focus-within .chapter-ordinal {
+  color: var(--color-accent);
+  -webkit-text-stroke-color: var(--color-accent);
+}

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { LenisProvider } from '@/components/lenis-provider';
+import { GlobalCanvasMount } from '@/components/canvas-mount';
 import { SITE } from '@/lib/site';
 import './globals.css';
 
@@ -65,7 +66,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${mono.variable}`}>
       <body>
-        <LenisProvider>{children}</LenisProvider>
+        <LenisProvider>
+          <GlobalCanvasMount />
+          <div className="relative z-10">{children}</div>
+        </LenisProvider>
       </body>
     </html>
   );
