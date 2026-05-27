@@ -1,9 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState, type DragEvent } from 'react';
+import { useMemo, useState, type DragEvent } from 'react';
 import { findDemo } from '@/lib/demo-registry';
-import { CustomCursor } from './cursor';
 import {
   DEALS,
   STAGES,
@@ -32,19 +31,6 @@ export default function CursorAwareCRM() {
   const [showPriority, setShowPriority] = useState(false);
   const [showChartDetail, setShowChartDetail] = useState(false);
 
-  // Hide the OS cursor globally while this demo is mounted. Without this,
-  // the native cursor leaks through over modals, the priority panel, and
-  // any body padding outside <main>, so the user sees two cursors.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    const prev = document.documentElement.style.cursor;
-    document.documentElement.style.cursor = 'none';
-    return () => {
-      document.documentElement.style.cursor = prev;
-    };
-  }, []);
-
   const byStage = useMemo(() => {
     const map: Record<DealStage, Deal[]> = { New: [], Contacted: [], Proposal: [], Won: [] };
     for (const d of deals) map[d.stage].push(d);
@@ -66,13 +52,7 @@ export default function CursorAwareCRM() {
 
   return (
     <>
-      {/* Custom cursor overlay — hides itself on touch devices */}
-      <CustomCursor />
-
-      <main
-        className="relative min-h-dvh px-6 pb-24 pt-28 md:px-12"
-        style={{ cursor: 'none' }}
-      >
+      <main className="relative min-h-dvh px-6 pb-24 pt-28 md:px-12">
         <header className="mx-auto max-w-6xl">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
             {demo.ordinal} · {demo.system}
