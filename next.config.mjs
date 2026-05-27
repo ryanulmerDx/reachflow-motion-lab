@@ -20,7 +20,7 @@ const CSP_DIRECTIVES = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://*.sentry.io https://*.ingest.sentry.io",
+  "connect-src 'self' https://*.sentry.io https://*.ingest.sentry.io https://unpkg.com",
   "worker-src 'self' blob:",
   "media-src 'self'",
   "object-src 'none'",

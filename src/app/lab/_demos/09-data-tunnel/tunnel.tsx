@@ -29,7 +29,7 @@ export function TunnelShader({ scrollRef }: TunnelShaderProps) {
 
 function TunnelMesh({ scrollRef }: TunnelShaderProps) {
   const matRef = useRef<ShaderMaterial>(null);
-  const { size } = useThree();
+  const { size, viewport } = useThree();
 
   const uniforms = useUniforms({
     uTime: 0,
@@ -45,9 +45,11 @@ function TunnelMesh({ scrollRef }: TunnelShaderProps) {
     uniforms.uScroll.value = scrollRef.current ?? 0;
   });
 
+  // Scale a unit plane to the View's world-space viewport so the shader
+  // fills the tracked DOM rect under the global perspective camera.
   return (
-    <mesh>
-      <planeGeometry args={[2, 2]} />
+    <mesh scale={[viewport.width, viewport.height, 1]}>
+      <planeGeometry args={[1, 1]} />
       <shaderMaterial
         ref={matRef}
         vertexShader={vertexShader}

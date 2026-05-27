@@ -19,6 +19,7 @@ export const SITE = {
       'ReachFlow Studio builds production systems — booking flows, CRMs, automated pipelines, custom dashboards — for solo operators and small teams who want enterprise polish without the enterprise headcount.',
   },
   repo: 'https://github.com/ryanulmerDx/reachflow-motion-lab',
+  year: 2026,
   socials: {
     x: 'https://x.com/ryanulmerDx',
     linkedin: 'https://www.linkedin.com/in/ryan-ulmer/',

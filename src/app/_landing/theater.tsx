@@ -1,16 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { useGSAP } from '@gsap/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollTrigger } from '@/lib/gsap';
 import { DEMOS } from '@/lib/demo-registry';
-
-// Mount the WebGL stage client-side only — Canvas can't run during SSR.
-const TheaterStage = dynamic(() => import('./theater-stage').then((m) => m.TheaterStage), {
-  ssr: false,
-});
+import { TheaterStage } from './theater-stage';
 
 /**
  * Cinematic "Systems Theater" — replaces the flat chapter list.
@@ -29,6 +24,11 @@ export function LandingTheater() {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef(0);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useGSAP(
     () => {
@@ -76,7 +76,7 @@ export function LandingTheater() {
       <div className="sticky top-0 isolate flex h-[100svh] min-h-[680px] w-full flex-col overflow-hidden">
         {/* Dedicated shader canvas — full-bleed, behind everything. */}
         <div className="absolute inset-0 -z-10 h-full w-full">
-          <TheaterStage progressRef={progressRef} />
+          {mounted ? <TheaterStage progressRef={progressRef} /> : null}
         </div>
 
         {/* Soft left-side darkening so the giant ordinal stays readable. */}

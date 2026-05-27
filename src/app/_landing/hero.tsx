@@ -1,24 +1,30 @@
 'use client';
 
-import { useFrame, useThree } from '@react-three/fiber';
 import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
-import { Color, Vector2, type ShaderMaterial } from 'three';
-import { DemoView } from '@/components/demo-view';
-import { useUniforms } from '@/lib/uniforms';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap';
 import { SITE } from '@/lib/site';
-import { fragmentShader, vertexShader } from './hero-shader';
+import { HeroStage } from './hero-stage';
 
 /**
- * Full-bleed shader hero, basement.studio-tier:
+ * Full-bleed shader hero.
+ *
  *   - Sticky-feel viewport hero (h-screen)
- *   - Live noise shader behind ginormous wordmark
+ *   - Self-contained orthographic R3F Canvas behind the wordmark
  *   - GSAP letter stagger on mount
  *   - Mono ticker top, scroll cue bottom
+ *
+ * The Canvas is mounted via a `mounted` flag (set in useEffect) so the
+ * server tree and the first client tree match exactly — no hydration
+ * mismatch from `next/dynamic({ ssr: false })` bailouts.
  */
 export function LandingHero() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useGSAP(
     () => {
@@ -58,9 +64,16 @@ export function LandingHero() {
       ref={rootRef}
       className="relative isolate flex h-[100svh] min-h-[680px] w-full flex-col overflow-hidden"
     >
-      <DemoView className="absolute inset-0 -z-10 h-full w-full">
-        <HeroShaderMesh />
-      </DemoView>
+      {/* Shader stage — full-bleed, behind everything. */}
+      <div className="absolute inset-0 -z-10 h-full w-full">
+        {mounted ? <HeroStage /> : null}
+      </div>
+
+      {/* Soft dark gradient so the wordmark stays readable over the shader. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_30%_50%,rgba(8,8,10,0.35),rgba(8,8,10,0.85))]"
+      />
 
       {/* Top ticker */}
       <div
@@ -124,7 +137,7 @@ export function LandingHero() {
       >
         <span>(Scroll)</span>
         <span className="hidden md:inline">
-          MIT licensed · {new Date().getFullYear()}
+          MIT licensed · {SITE.year}
         </span>
         <span>v0.4 — Wave 4 shipped</span>
       </div>
@@ -141,42 +154,9 @@ function Letters({ text }: { text: string }) {
           data-hero-letter
           className="inline-block will-change-transform"
         >
-          {ch === ' ' ? ' ' : ch}
+          {ch === ' ' ? ' ' : ch}
         </span>
       ))}
     </>
-  );
-}
-
-function HeroShaderMesh() {
-  const matRef = useRef<ShaderMaterial>(null);
-  const { size } = useThree();
-
-  const uniforms = useUniforms({
-    uTime: 0,
-    uResolution: new Vector2(size.width, size.height),
-    uMouse: new Vector2(0.5, 0.5),
-    uTint: new Color('#67e8f9'),
-    uIntensity: 1.0,
-  });
-
-  useFrame(({ clock, pointer }) => {
-    if (!matRef.current) return;
-    uniforms.uTime.value = clock.elapsedTime;
-    uniforms.uResolution.value.set(size.width, size.height);
-    uniforms.uMouse.value.set(pointer.x * 0.5 + 0.5, pointer.y * 0.5 + 0.5);
-  });
-
-  return (
-    <mesh>
-      <planeGeometry args={[2, 2]} />
-      <shaderMaterial
-        ref={matRef}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-        transparent
-      />
-    </mesh>
   );
 }
