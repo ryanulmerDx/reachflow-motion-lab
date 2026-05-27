@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState, type DragEvent } from 'react';
+import { useEffect, useMemo, useState, type DragEvent } from 'react';
 import { findDemo } from '@/lib/demo-registry';
 import { CustomCursor } from './cursor';
 import {
@@ -30,6 +30,20 @@ export default function CursorAwareCRM() {
   const [hoverStage, setHoverStage] = useState<DealStage | null>(null);
   const [inspectedDeal, setInspectedDeal] = useState<Deal | null>(null);
   const [showPriority, setShowPriority] = useState(false);
+  const [showChartDetail, setShowChartDetail] = useState(false);
+
+  // Hide the OS cursor globally while this demo is mounted. Without this,
+  // the native cursor leaks through over modals, the priority panel, and
+  // any body padding outside <main>, so the user sees two cursors.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    const prev = document.documentElement.style.cursor;
+    document.documentElement.style.cursor = 'none';
+    return () => {
+      document.documentElement.style.cursor = prev;
+    };
+  }, []);
 
   const byStage = useMemo(() => {
     const map: Record<DealStage, Deal[]> = { New: [], Contacted: [], Proposal: [], Won: [] };
@@ -145,15 +159,17 @@ export default function CursorAwareCRM() {
         {/* ── Chart + legend row ──────────────────────────────────────────── */}
         <section className="mx-auto mt-8 max-w-6xl">
           <div className="grid gap-4 md:grid-cols-3">
-            <div
+            <button
+              type="button"
               data-cursor="inspect"
-              className="col-span-2 rounded-2xl border border-white/5 p-6"
+              onClick={() => setShowChartDetail(true)}
+              className="col-span-2 rounded-2xl border border-white/5 p-6 text-left transition-colors hover:border-white/15 hover:bg-white/[0.02] focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-accent)]"
             >
               <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
                 Weekly closed value · last 8 weeks
               </p>
               <SparklineChart />
-            </div>
+            </button>
 
             <div className="rounded-2xl border border-white/5 p-6">
               <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
@@ -206,6 +222,10 @@ export default function CursorAwareCRM() {
 
       {showPriority ? (
         <PriorityPanel deals={priorityQueue} onClose={() => setShowPriority(false)} />
+      ) : null}
+
+      {showChartDetail ? (
+        <ChartDetailModal onClose={() => setShowChartDetail(false)} />
       ) : null}
     </>
   );
@@ -349,7 +369,7 @@ function InspectModal({ deal, onClose }: { deal: Deal; onClose: () => void }) {
       aria-modal="true"
       aria-label={`${deal.company} deal details`}
       onClick={onClose}
-      style={{ cursor: 'auto' }}
+      data-cursor="open"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm"
     >
       <div
@@ -411,7 +431,6 @@ function PriorityPanel({
       role="dialog"
       aria-modal="false"
       aria-label="Priority queue"
-      style={{ cursor: 'auto' }}
       className="fixed right-4 top-4 bottom-4 z-40 flex w-full max-w-sm flex-col rounded-2xl border border-white/10 bg-[var(--color-bg)] p-5 shadow-2xl shadow-black/60"
     >
       <div className="flex items-center justify-between">
@@ -605,5 +624,96 @@ function OwnerList() {
         </li>
       ))}
     </ul>
+  );
+}
+
+// ─── ChartDetailModal ─────────────────────────────────────────────────────────
+
+function ChartDetailModal({ onClose }: { onClose: () => void }) {
+  const data = SPARKLINE_DATA;
+  const total = data.reduce((sum, v) => sum + v, 0);
+  const peakWeek = data.indexOf(Math.max(...data)) + 1;
+  const weekOverWeek = data[data.length - 1]! - data[data.length - 2]!;
+  const wowPct = ((weekOverWeek / data[data.length - 2]!) * 100).toFixed(1);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Weekly closed value breakdown"
+      onClick={onClose}
+      data-cursor="open"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg rounded-2xl border border-white/10 bg-[var(--color-bg)] p-6 shadow-2xl shadow-black/60"
+      >
+        <div className="flex items-center justify-between">
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
+            Closed value · last 8 weeks
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full p-1 text-[var(--color-ink-dim)] hover:bg-white/5 hover:text-[var(--color-ink)]"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-4 border-b border-white/5 pb-4">
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
+              8-wk total
+            </p>
+            <p className="mt-1 font-display text-2xl font-medium">${total.toFixed(1)}k</p>
+          </div>
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
+              Peak week
+            </p>
+            <p className="mt-1 font-display text-2xl font-medium">W{peakWeek}</p>
+          </div>
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
+              W-o-W
+            </p>
+            <p
+              className={`mt-1 font-display text-2xl font-medium ${
+                weekOverWeek >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              {weekOverWeek >= 0 ? '+' : ''}
+              {wowPct}%
+            </p>
+          </div>
+        </div>
+
+        <ul className="mt-4 flex flex-col gap-2">
+          {data.map((v, i) => {
+            const max = Math.max(...data);
+            const pct = (v / max) * 100;
+            return (
+              <li key={i} className="flex items-center gap-3">
+                <span className="w-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
+                  W{i + 1}
+                </span>
+                <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-white/5">
+                  <div
+                    className="h-full rounded-full bg-[var(--color-accent)]/70"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <span className="w-16 text-right font-mono text-[11px] text-[var(--color-ink)]">
+                  ${v.toFixed(1)}k
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
   );
 }
