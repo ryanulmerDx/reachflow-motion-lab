@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useGSAP } from '@gsap/react';
 import { useEffect, useRef, useState } from 'react';
 import { ScrollTrigger } from '@/lib/gsap';
@@ -104,37 +105,40 @@ export function LandingTheater() {
         {/* Stage body */}
         <div className="relative flex flex-1 items-center px-6 md:px-12">
           <div className="grid w-full grid-cols-12 items-end gap-x-6 gap-y-8">
-            {/* Mega ordinal */}
-            <div
-              key={`ord-${activeDemo.slug}`}
-              className="theater-fade col-span-12 md:col-span-5"
-            >
-              <p className="font-display text-[clamp(140px,24vw,420px)] font-medium leading-[0.82] tracking-[-0.06em]">
+            {/* Mega ordinal — re-key inner text only so the column stays
+                stable while the value crossfades. */}
+            <div className="col-span-12 md:col-span-5">
+              <p
+                key={`ord-${activeDemo.slug}`}
+                className="theater-fade font-display text-[clamp(140px,24vw,420px)] font-medium leading-[0.82] tracking-[-0.06em]"
+              >
                 {activeDemo.ordinal}
               </p>
             </div>
 
-            {/* Copy block */}
-            <div
-              key={`copy-${activeDemo.slug}`}
-              className="theater-fade col-span-12 md:col-span-7"
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--color-ink-dim)] md:text-[11px]">
-                System — {activeDemo.system}
-              </p>
-              <h3 className="mt-3 text-balance font-display text-4xl font-medium leading-[1.02] md:mt-5 md:text-6xl lg:text-7xl">
-                {activeDemo.title}
-              </h3>
-              <p className="mt-4 max-w-2xl text-balance text-base text-[var(--color-ink-dim)] md:mt-6 md:text-xl">
-                {activeDemo.tagline}
-              </p>
-              <p className="mt-6 max-w-2xl font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)] md:text-[11px]">
-                Technique —{' '}
-                <span className="text-[var(--color-ink)]">{activeDemo.technique}</span>
-              </p>
+            {/* Copy block — the wrapper and the Link stay mounted across
+                slug changes so a scroll-while-clicking gesture never
+                unmounts the link mid-click. Only the text nodes re-key. */}
+            <div className="col-span-12 md:col-span-7">
+              <div key={`copy-${activeDemo.slug}`} className="theater-fade">
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--color-ink-dim)] md:text-[11px]">
+                  System — {activeDemo.system}
+                </p>
+                <h3 className="mt-3 text-balance font-display text-4xl font-medium leading-[1.02] md:mt-5 md:text-6xl lg:text-7xl">
+                  {activeDemo.title}
+                </h3>
+                <p className="mt-4 max-w-2xl text-balance text-base text-[var(--color-ink-dim)] md:mt-6 md:text-xl">
+                  {activeDemo.tagline}
+                </p>
+                <p className="mt-6 max-w-2xl font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)] md:text-[11px]">
+                  Technique —{' '}
+                  <span className="text-[var(--color-ink)]">{activeDemo.technique}</span>
+                </p>
+              </div>
               <Link
-                href={`/lab/${activeDemo.slug}`}
-                className="mt-8 inline-flex items-center gap-3 rounded-full border border-[var(--color-accent)]/40 bg-[var(--color-bg)]/60 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--color-accent)] backdrop-blur transition-colors hover:bg-[var(--color-accent)]/15"
+                href={`/lab/${activeDemo.slug}` as Route}
+                prefetch={false}
+                className="relative z-20 mt-8 inline-flex items-center gap-3 rounded-full border border-[var(--color-accent)]/40 bg-[var(--color-bg)]/60 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--color-accent)] backdrop-blur transition-colors hover:bg-[var(--color-accent)]/15"
               >
                 Open system <span aria-hidden>→</span>
               </Link>
