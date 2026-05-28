@@ -93,12 +93,16 @@ export default function AutomationPipeline() {
         {/* Two-column layout: canvas left, panel right (stacked on mobile) */}
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
           {/* ── Workflow canvas ─────────────────────────────────────────── */}
-          <div className="flex-1">
-            {/* Node labels overlay (HTML — rendered above the canvas) */}
-            <NodeLabelsOverlay />
+          <div className="flex-1 min-w-0">
+            {/* Node labels overlay (HTML — rendered above the canvas).
+                Hidden on mobile because the 5 labels collide at narrow widths;
+                a vertical pipeline summary appears below the canvas instead. */}
+            <div className="hidden sm:block">
+              <NodeLabelsOverlay />
+            </div>
 
             {/* R3F DemoView region */}
-            <div className="relative h-[50vh] min-h-[320px] overflow-hidden rounded-2xl border border-white/5">
+            <div className="relative h-[42vh] min-h-[280px] sm:h-[50vh] sm:min-h-[320px] overflow-hidden rounded-2xl border border-white/5">
               <DemoView className="absolute inset-0 h-full w-full">
                 <WorkflowScene
                   velocityRef={smoothVelRef}
@@ -108,8 +112,30 @@ export default function AutomationPipeline() {
               </DemoView>
             </div>
 
+            {/* Mobile-only stage summary — replaces the cramped overlay */}
+            <ol className="mt-3 grid grid-cols-3 gap-2 sm:hidden">
+              {[
+                { sub: 'Trigger', label: 'Webform', color: '#67e8f9' },
+                { sub: 'Enrich', label: 'Clearbit', color: '#a78bfa' },
+                { sub: 'Route', label: 'Lead score', color: '#34d399' },
+              ].map((step) => (
+                <li
+                  key={step.sub}
+                  className="rounded-md border border-white/5 px-2 py-1.5"
+                >
+                  <span
+                    className="block font-mono text-[8px] uppercase tracking-[0.18em]"
+                    style={{ color: step.color }}
+                  >
+                    {step.sub}
+                  </span>
+                  <span className="block text-[10px] text-white/70">{step.label}</span>
+                </li>
+              ))}
+            </ol>
+
             {/* Legend */}
-            <div className="mt-4 flex gap-6">
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-6">
               <LegendItem color="#67e8f9" label="Hot lead → Slack #sales" />
               <LegendItem color="#fde68a" label="Warm lead → Drip sequence" />
             </div>
@@ -165,19 +191,28 @@ function WorkflowScene({ velocityRef, hitTimesRef, onNodeHit }: WorkflowScenePro
 // ─── CameraRig ────────────────────────────────────────────────────────────────
 
 function CameraRig({ velocityRef }: { velocityRef: React.RefObject<number> }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
+
+  // Graph spans ~7.2 world units wide; with padding we want 8 to fit. Compute
+  // the minimum camera Z that fits the horizontal span for the current aspect
+  // so portrait/mobile doesn't clip the trigger and slack/drip columns.
+  const aspect = size.width / Math.max(size.height, 1);
+  const halfFovY = (50 * Math.PI) / 180 / 2;
+  const halfFovX = Math.atan(Math.tan(halfFovY) * aspect);
+  const fitZ = 4 / Math.tan(halfFovX); // distance to fit ±4 horizontal
+  const baseZ = Math.max(5.5, fitZ);
 
   useFrame(() => {
     const vel = velocityRef.current ?? 0;
     // Gentle z-drift on scroll: pulls camera slightly back when scrolling fast
-    const targetZ = 5.5 + Math.abs(vel) * 0.8;
+    const targetZ = baseZ + Math.abs(vel) * 0.8;
     camera.position.z += (targetZ - camera.position.z) * 0.06;
     // Slight y-tilt
     camera.position.y += (vel * -0.12 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
   });
 
-  return <PerspectiveCamera makeDefault position={[0, 0, 5.5]} fov={50} />;
+  return <PerspectiveCamera makeDefault position={[0, 0, baseZ]} fov={50} />;
 }
 
 // ─── NodeLabelsOverlay ────────────────────────────────────────────────────────

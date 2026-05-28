@@ -93,9 +93,14 @@ export default function CursorAwareCRM() {
           </div>
         </section>
 
-        {/* ── Kanban board ────────────────────────────────────────────────── */}
+        {/* ── Kanban board ──────────────────────────────────────────────────
+            Mobile: horizontal snap-scroll so each stage stays readable at
+              ~80vw wide instead of 4 crammed columns side-by-side.
+            sm+: standard 4-up grid.
+            (Native HTML drag-drop doesn't fire on iOS Safari; on mobile the
+             board is currently read/inspect-only — tap a card to inspect.) */}
         <section className="mx-auto mt-8 max-w-6xl">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="-mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 md:grid-cols-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {STAGES.map((stage) => (
               <KanbanColumn
                 key={stage}
@@ -246,7 +251,7 @@ function KanbanColumn({
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
-      className={`flex flex-col gap-2 rounded-xl p-1 transition-colors ${
+      className={`flex w-[78vw] shrink-0 snap-start flex-col gap-2 rounded-xl p-1 transition-colors sm:w-auto sm:shrink ${
         isHover ? 'bg-[var(--color-accent)]/10 ring-1 ring-inset ring-[var(--color-accent)]/40' : ''
       }`}
     >

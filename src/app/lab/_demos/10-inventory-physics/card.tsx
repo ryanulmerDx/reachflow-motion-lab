@@ -51,7 +51,12 @@ interface CardProps {
 
 export function Card({ item, initialPosition, onSettle, currentPile }: CardProps) {
   const rbRef = useRef<RapierRigidBody>(null);
-  const { viewport, gl } = useThree();
+  const { viewport, gl, camera } = useThree();
+  // Cards are DOM overlays via drei Html, which doesn't scale with camera zoom
+  // by default. Mirror the orthographic zoom (set in scene.tsx ResponsiveCamera)
+  // so a CARD_W=2 world card always renders as 2 * zoom pixels wide. This
+  // keeps card visuals consistent with the physics collider on any viewport.
+  const zoom = 'zoom' in camera ? (camera.zoom as number) : 60;
 
   // Drag state
   const isDragging = useRef(false);
@@ -226,11 +231,12 @@ export function Card({ item, initialPosition, onSettle, currentPile }: CardProps
       <Html
         center
         style={{
-          width: `${CARD_W * 60}px`,
+          width: `${CARD_W * zoom}px`,
           pointerEvents: 'auto',
           cursor: dragging ? 'grabbing' : 'grab',
           userSelect: 'none',
           WebkitUserSelect: 'none',
+          touchAction: 'none',
         }}
       >
         <div

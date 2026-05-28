@@ -78,6 +78,13 @@ export default function FluidPricingCursor() {
     const page = pageRef.current;
     if (!page) return;
 
+    // Touch-only devices have no hover cursor — the fluid trail would never
+    // light up. Drive an autonomous orbit when (hover: none) so visitors on
+    // mobile still see the effect.
+    const isTouchOnly =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(hover: none) and (pointer: coarse)').matches;
+
     const onMove = (e: PointerEvent) => {
       const rect = page.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
@@ -96,8 +103,21 @@ export default function FluidPricingCursor() {
       pointerRef.current = { x, y };
     };
 
-    // Smooth decay loop for velocity
+    const autoStart = performance.now();
     const tick = () => {
+      // Auto-orbit fallback for touch — slow Lissajous figure across the page,
+      // injects synthetic velocity so the trail keeps swirling. Real touch
+      // input wins because onMove overwrites lastPosRef on every event.
+      if (isTouchOnly) {
+        const t = (performance.now() - autoStart) / 1000;
+        const x = 0.5 + 0.32 * Math.sin(t * 0.6);
+        const y = 0.5 + 0.22 * Math.sin(t * 0.42 + 1.3);
+        const dx = x - lastPosRef.current.x;
+        const dy = y - lastPosRef.current.y;
+        rawVelRef.current = Math.min(Math.sqrt(dx * dx + dy * dy) * 60, 0.6);
+        lastPosRef.current = { x, y };
+        pointerRef.current = { x, y };
+      }
       velocityRef.current += (rawVelRef.current - velocityRef.current) * 0.15;
       rawVelRef.current *= 0.88;
       rafRef.current = requestAnimationFrame(tick);

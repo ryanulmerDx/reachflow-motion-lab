@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useCallback, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { OrthographicCamera } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import type { Vector3Tuple } from 'three';
@@ -12,6 +12,30 @@ import {
   type InventoryItem,
   type PileId,
 } from './inventory';
+
+// World half-widths used by piles.tsx (ARENA_X = 8.5). The scene must always
+// show all three piles plus a touch of breathing room, so we fit a horizontal
+// span of WORLD_FIT_WIDTH world-units to whatever canvas width we get.
+const WORLD_FIT_WIDTH = 18;
+
+/**
+ * Drives the orthographic camera zoom from the live canvas size so the scene
+ * stays horizontally fitted on every viewport (desktop ~60, mobile ~20).
+ */
+function ResponsiveCamera() {
+  const width = useThree((s) => s.size.width);
+  const zoom = Math.max(18, width / WORLD_FIT_WIDTH);
+
+  return (
+    <OrthographicCamera
+      makeDefault
+      zoom={zoom}
+      position={[0, 0, 20]}
+      near={0.1}
+      far={100}
+    />
+  );
+}
 
 // ─── Layout helpers ───────────────────────────────────────────────────────────
 
@@ -63,13 +87,7 @@ export function Scene({ items, onSettle }: SceneProps) {
       style={{ width: '100%', height: '100%' }}
       gl={{ antialias: true, alpha: true }}
     >
-      <OrthographicCamera
-        makeDefault
-        zoom={60}
-        position={[0, 0, 20]}
-        near={0.1}
-        far={100}
-      />
+      <ResponsiveCamera />
 
       <ambientLight intensity={0.6} />
 

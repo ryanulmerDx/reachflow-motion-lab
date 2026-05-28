@@ -116,9 +116,11 @@ export default function InventoryPhysics() {
       {/* ── Canvas + Sidebar ── */}
       <div className="mx-auto mt-6 max-w-7xl">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          {/* Physics canvas */}
+          {/* Physics canvas — must use fixed height in mobile flex-col;
+              flex-1 alone collapses the main-axis size because flex-basis 0%
+              outranks the inline height in this layout. */}
           <div
-            className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/5"
+            className="relative w-full min-h-0 overflow-hidden rounded-2xl border border-white/5 lg:flex-1"
             style={{ height: 'clamp(380px, 55vh, 600px)' }}
           >
             {/* Pile zone tints — purely decorative background */}

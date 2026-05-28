@@ -170,12 +170,18 @@ export function LandingTheater() {
                   aria-label={`Jump to ${d.title}`}
                   aria-current={i === activeIdx ? 'true' : undefined}
                   onClick={() => jumpTo(i)}
-                  className={`block h-1 w-full transition-colors ${
-                    i === activeIdx
-                      ? 'bg-[var(--color-accent)]'
-                      : 'bg-white/15 hover:bg-white/30'
-                  }`}
-                />
+                  className="group block w-full py-3 -my-3"
+                >
+                  {/* Visual 1px bar, full tap target via py-3/-my-3 padding */}
+                  <span
+                    aria-hidden
+                    className={`block h-1 w-full transition-colors ${
+                      i === activeIdx
+                        ? 'bg-[var(--color-accent)]'
+                        : 'bg-white/15 group-hover:bg-white/30'
+                    }`}
+                  />
+                </button>
               </li>
             ))}
           </ol>
