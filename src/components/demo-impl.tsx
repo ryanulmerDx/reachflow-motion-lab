@@ -41,8 +41,8 @@ const IMPLS: Readonly<Record<string, DemoComponent>> = {
     () => import('@/app/lab/_demos/05-intake-form-warp'),
     { ssr: false }
   ),
-  'client-logo-marquee': dynamic(
-    () => import('@/app/lab/_demos/06-client-logo-marquee'),
+  'listing-explorer': dynamic(
+    () => import('@/app/lab/_demos/06-listing-explorer'),
     { ssr: false }
   ),
   'fluid-pricing-cursor': dynamic(

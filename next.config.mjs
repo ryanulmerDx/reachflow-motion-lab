@@ -50,6 +50,7 @@ const nextConfig = {
     return [
       { source: '/lab/data-tunnel', destination: '/lab/voice-receptionist', permanent: true },
       { source: '/lab/inventory-physics', destination: '/lab/field-inventory', permanent: true },
+      { source: '/lab/client-logo-marquee', destination: '/lab/listing-explorer', permanent: true },
     ];
   },
   async headers() {

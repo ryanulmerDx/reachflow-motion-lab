@@ -21,7 +21,7 @@ const DEMO_TINTS: Readonly<Record<string, readonly [string, string]>> = {
   'shader-dashboard-hero': ['#a78bfa', '#7c3aed'],
   'portal-transitions': ['#67e8f9', '#0891b2'],
   'intake-form-warp': ['#f472b6', '#ec4899'],
-  'client-logo-marquee': ['#facc15', '#eab308'],
+  'listing-explorer': ['#67e8f9', '#34d399'],
   'fluid-pricing-cursor': ['#34d399', '#10b981'],
   'automation-pipeline': ['#fb7185', '#e11d48'],
   'voice-receptionist': ['#67e8f9', '#c084fc'],

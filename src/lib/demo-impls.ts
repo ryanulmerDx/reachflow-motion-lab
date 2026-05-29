@@ -24,7 +24,7 @@ export const IMPLEMENTED_SLUGS = new Set<string>([
   'shader-dashboard-hero',
   'portal-transitions',
   'intake-form-warp',
-  'client-logo-marquee',
+  'listing-explorer',
   'fluid-pricing-cursor',
   'automation-pipeline',
   'voice-receptionist',
