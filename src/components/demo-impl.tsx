@@ -53,8 +53,8 @@ const IMPLS: Readonly<Record<string, DemoComponent>> = {
     () => import('@/app/lab/_demos/08-automation-pipeline'),
     { ssr: false }
   ),
-  'data-tunnel': dynamic(
-    () => import('@/app/lab/_demos/09-data-tunnel'),
+  'voice-receptionist': dynamic(
+    () => import('@/app/lab/_demos/09-voice-receptionist'),
     { ssr: false }
   ),
   'inventory-physics': dynamic(
@@ -75,7 +75,6 @@ const IMPLS: Readonly<Record<string, DemoComponent>> = {
 const GATED_SLUGS = new Set([
   'fluid-pricing-cursor',
   'automation-pipeline',
-  'data-tunnel',
   'inventory-physics',
 ]);
 
@@ -84,7 +83,6 @@ const BYPASS_COPY: Record<string, string> = {
     'A WebGL pheromone trail follows your cursor across the pricing tiers.',
   'automation-pipeline':
     'Hundreds of GPU-instanced particles flow through a workflow graph.',
-  'data-tunnel': 'A ray-marched SDF tunnel renders behind a scrolling case study.',
   'inventory-physics':
     'Rapier rigid bodies let you drag, fling, and watch cards settle.',
 };

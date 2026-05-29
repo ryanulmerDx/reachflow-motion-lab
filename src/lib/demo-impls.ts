@@ -27,7 +27,7 @@ export const IMPLEMENTED_SLUGS = new Set<string>([
   'client-logo-marquee',
   'fluid-pricing-cursor',
   'automation-pipeline',
-  'data-tunnel',
+  'voice-receptionist',
   'inventory-physics',
 ]);
 

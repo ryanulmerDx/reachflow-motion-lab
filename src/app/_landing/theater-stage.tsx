@@ -24,7 +24,7 @@ const DEMO_TINTS: Readonly<Record<string, readonly [string, string]>> = {
   'client-logo-marquee': ['#facc15', '#eab308'],
   'fluid-pricing-cursor': ['#34d399', '#10b981'],
   'automation-pipeline': ['#fb7185', '#e11d48'],
-  'data-tunnel': ['#818cf8', '#4f46e5'],
+  'voice-receptionist': ['#67e8f9', '#c084fc'],
   'inventory-physics': ['#fdba74', '#ea580c'],
 };
 
