@@ -28,7 +28,7 @@ export const IMPLEMENTED_SLUGS = new Set<string>([
   'fluid-pricing-cursor',
   'automation-pipeline',
   'voice-receptionist',
-  'inventory-physics',
+  'field-inventory',
 ]);
 
 export function hasDemoImpl(slug: string): boolean {

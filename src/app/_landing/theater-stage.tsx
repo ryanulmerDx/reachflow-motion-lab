@@ -25,7 +25,7 @@ const DEMO_TINTS: Readonly<Record<string, readonly [string, string]>> = {
   'fluid-pricing-cursor': ['#34d399', '#10b981'],
   'automation-pipeline': ['#fb7185', '#e11d48'],
   'voice-receptionist': ['#67e8f9', '#c084fc'],
-  'inventory-physics': ['#fdba74', '#ea580c'],
+  'field-inventory': ['#fdba74', '#ea580c'],
 };
 
 function tintFor(slug: string): readonly [string, string] {
