@@ -204,11 +204,12 @@ function CameraRig({ velocityRef }: { velocityRef: React.RefObject<number> }) {
 
   useFrame(() => {
     const vel = velocityRef.current ?? 0;
-    // Gentle z-drift on scroll: pulls camera slightly back when scrolling fast
-    const targetZ = baseZ + Math.abs(vel) * 0.8;
+    // Very subtle z-drift on scroll — kept small so the graph stays put
+    // instead of lurching with the page.
+    const targetZ = baseZ + Math.abs(vel) * 0.18;
     camera.position.z += (targetZ - camera.position.z) * 0.06;
-    // Slight y-tilt
-    camera.position.y += (vel * -0.12 - camera.position.y) * 0.04;
+    // Barely-there y-tilt
+    camera.position.y += (vel * -0.03 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
   });
 

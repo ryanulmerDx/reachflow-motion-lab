@@ -30,6 +30,11 @@ void main() {
   float dist   = length(uv - ptr);
   float gauss  = exp(-dist * dist / (2.0 * radius * radius));
 
+  // Gate intensity by velocity: at rest nothing is injected, so an idle
+  // pointer leaves no lingering blob — the trail decays fully to black when
+  // you stop moving. Ramps to full intensity with even a small swipe.
+  float intensity = smoothstep(0.0, 0.05, uVelocity);
+
   // Output is added to whatever is already in the FBO via AdditiveBlending
-  gl_FragColor = vec4(uColor * gauss, gauss);
+  gl_FragColor = vec4(uColor * gauss, gauss) * intensity;
 }

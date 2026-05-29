@@ -39,9 +39,9 @@ function EdgeLines() {
             key={edge.id}
             points={points}
             color={color}
-            lineWidth={0.8}
+            lineWidth={1.4}
             transparent
-            opacity={0.18}
+            opacity={0.5}
           />
         );
       })}
@@ -110,7 +110,7 @@ function NodeCard({
       {/* Static border ring */}
       <mesh>
         <ringGeometry args={[0.17, 0.195, 32]} />
-        <meshBasicMaterial color={node.color} transparent opacity={0.4} toneMapped={false} />
+        <meshBasicMaterial color={node.color} transparent opacity={0.8} toneMapped={false} />
       </mesh>
 
       {/* Halo pulse ring */}
