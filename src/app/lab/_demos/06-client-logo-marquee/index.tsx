@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import { findDemo } from '@/lib/demo-registry';
 
 const demo = findDemo('client-logo-marquee')!;
@@ -9,13 +9,13 @@ const demo = findDemo('client-logo-marquee')!;
 /**
  * Client Logo Marquee — perspective-skewed strip of past client wordmarks.
  *
- * The skew is tied to scroll velocity (px/ms), measured in a passive scroll
- * listener and smoothed with an exponential decay so the strip "lurches"
- * into rotation when you flick the page and settles back when you stop.
+ * Each strip auto-drifts, but you can grab it and fling it: a pointer drag
+ * scrubs the strip directly, and on release the throw velocity carries as
+ * momentum before easing back to the gentle base drift. The skew is a function
+ * of that live velocity, so the strip leans into a fast flick and settles when
+ * it slows.
  *
- * No WebGL, no GSAP — pure CSS 3D transforms + a single useEffect for the
- * velocity ref. Lenis smooths the underlying scroll so the velocity signal
- * is buttery instead of stepped.
+ * No WebGL, no GSAP — a single rAF loop driving a CSS 3D transform.
  */
 export default function ClientLogoMarquee() {
   return (
@@ -68,71 +68,95 @@ const CLIENTS = [
 ];
 
 function ScrollMarquee({ row, subtle = false }: { row: 'ltr' | 'rtl'; subtle?: boolean }) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [_velocity, setVelocity] = useState(0);
-  const lastYRef = useRef(0);
-  const lastTRef = useRef(0);
-  const rawVelRef = useRef(0);
-  const smoothVelRef = useRef(0);
+  const offsetRef = useRef(0); // px translation, unbounded; wrapped at render
+  const velRef = useRef(0); // px/frame
+  const halfRef = useRef(1); // half the track width (one full set of items)
+  const draggingRef = useRef(false);
+  const lastXRef = useRef(0);
+
+  // Gentle resting drift — ltr strip glides left, rtl glides right.
+  const baseVel = row === 'ltr' ? -0.7 : 0.5;
 
   useEffect(() => {
-    lastYRef.current = window.scrollY;
-    lastTRef.current = performance.now();
+    velRef.current = baseVel;
+
+    const measure = () => {
+      const t = trackRef.current;
+      if (t) halfRef.current = Math.max(1, t.scrollWidth / 2);
+    };
+    measure();
+    window.addEventListener('resize', measure);
 
     let raf = 0;
-
-    const onScroll = () => {
-      const now = performance.now();
-      const dy = window.scrollY - lastYRef.current;
-      const dt = Math.max(now - lastTRef.current, 1);
-      rawVelRef.current = dy / dt;
-      lastYRef.current = window.scrollY;
-      lastTRef.current = now;
-    };
-
     const tick = () => {
-      // Exponential smoothing — chases raw velocity, decays to 0
-      smoothVelRef.current += (rawVelRef.current - smoothVelRef.current) * 0.18;
-      rawVelRef.current *= 0.92;
-      const v = smoothVelRef.current;
+      // When not being dragged, ease velocity back to the base drift so a
+      // flick carries as momentum and then settles.
+      if (!draggingRef.current) {
+        velRef.current += (baseVel - velRef.current) * 0.035;
+      }
+      // Clamp so a violent flick can't fling it absurdly fast.
+      velRef.current = Math.max(-60, Math.min(60, velRef.current));
+      offsetRef.current += velRef.current;
+
+      const half = halfRef.current;
+      let x = offsetRef.current % half;
+      if (x > 0) x -= half; // keep within (-half, 0] for a seamless loop
 
       const el = trackRef.current;
       if (el) {
-        const skew = Math.max(-22, Math.min(22, v * 6));
-        const dir = row === 'ltr' ? 1 : -1;
-        el.style.transform = `skewY(${skew * dir * 0.4}deg) translate3d(${-Math.abs(skew) * dir * 0.6}px, 0, 0)`;
+        const skew = Math.max(-20, Math.min(20, velRef.current * 2.2));
+        el.style.transform = `translate3d(${x}px, 0, 0) skewY(${skew * 0.25}deg)`;
       }
-      setVelocity(v);
-
       raf = requestAnimationFrame(tick);
     };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
     raf = requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', measure);
       cancelAnimationFrame(raf);
     };
-  }, [row]);
+  }, [baseVel]);
 
-  // Duplicate the list so the marquee loops seamlessly via CSS animation
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    draggingRef.current = true;
+    lastXRef.current = e.clientX;
+    velRef.current = 0;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
+    const dx = e.clientX - lastXRef.current;
+    lastXRef.current = e.clientX;
+    offsetRef.current += dx;
+    velRef.current = dx; // last drag delta becomes the flick momentum on release
+  };
+
+  const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      /* pointer already released */
+    }
+  };
+
+  // Duplicate the list so the marquee loops seamlessly
   const items = [...CLIENTS, ...CLIENTS];
 
   return (
     <div
-      ref={wrapperRef}
-      className="relative mx-auto my-8 max-w-[120rem] overflow-hidden"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerLeave={endDrag}
+      onPointerCancel={endDrag}
+      className="relative mx-auto my-8 max-w-[120rem] cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing"
       style={{ perspective: '1200px' }}
     >
-      <div
-        ref={trackRef}
-        className="flex w-max gap-12 will-change-transform"
-        style={{
-          animation: `marquee-${row} ${row === 'ltr' ? 40 : 55}s linear infinite`,
-        }}
-      >
+      <div ref={trackRef} className="flex w-max gap-12 will-change-transform">
         {items.map((label, i) => (
           <span
             key={`${label}-${i}`}
@@ -145,17 +169,6 @@ function ScrollMarquee({ row, subtle = false }: { row: 'ltr' | 'rtl'; subtle?: b
           </span>
         ))}
       </div>
-
-      <style>{`
-        @keyframes marquee-ltr {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
-        @keyframes marquee-rtl {
-          from { transform: translateX(-50%); }
-          to   { transform: translateX(0); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -171,16 +184,16 @@ function SectionCopy() {
         How it works
       </p>
       <p className="mt-4 text-[var(--color-ink-dim)] md:text-lg">
-        Flick the page. The marquees lean into the motion, then settle. The skew is
-        a function of scroll velocity in pixels-per-millisecond, smoothed with a
-        single exponential decay so the response stays buttery instead of jerky.
-        Lenis is doing the underlying scroll, which is what makes the signal feel
-        like silk instead of stepped wheel ticks.
+        Grab a strip and fling it. Your drag scrubs the marquee directly, and on
+        release the throw carries as momentum before easing back to a gentle
+        drift — the strip leans into a fast flick and straightens as it slows.
+        It&apos;s one requestAnimationFrame loop: velocity decays toward a base
+        drift, and the skew is just a function of that live velocity.
       </p>
       <p className="mt-4 text-[var(--color-ink-dim)]/80">
         Zero WebGL, zero new dependencies. Same pattern would work as the
         client-strip on a real agency homepage — proof that you don&apos;t need a
-        shader to make a section feel premium.
+        shader to make a section feel alive.
       </p>
     </section>
   );

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useMemo, useState, type DragEvent } from 'react';
 import { findDemo } from '@/lib/demo-registry';
-import { CustomCursor } from './cursor';
 import {
   DEALS,
   STAGES,
@@ -53,8 +52,7 @@ export default function CursorAwareCRM() {
 
   return (
     <>
-      <CustomCursor />
-      <main className="relative min-h-dvh px-6 pb-24 pt-28 md:px-12 [@media(pointer:fine)]:cursor-none">
+      <main className="relative min-h-dvh px-6 pb-24 pt-28 md:px-12">
         <header className="mx-auto max-w-6xl">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
             {demo.ordinal} · {demo.system}
@@ -311,7 +309,7 @@ function DealCard({ deal, isDragging, onDragStart, onDragEnd, onClick }: DealCar
       tabIndex={0}
       role="button"
       aria-label={`${deal.company} — ${formatValue(deal.value)} · click to inspect, drag to move stage`}
-      className={`group rounded-xl border border-white/5 bg-white/[0.025] p-4 transition-colors select-none cursor-grab active:cursor-grabbing [@media(pointer:fine)]:cursor-none focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-accent)] hover:border-white/15 hover:bg-white/[0.04] ${
+      className={`group rounded-xl border border-white/5 bg-white/[0.025] p-4 transition-colors select-none cursor-grab active:cursor-grabbing focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-accent)] hover:border-white/15 hover:bg-white/[0.04] ${
         isDragging ? 'opacity-40' : 'opacity-100'
       }`}
     >

@@ -1,10 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { findDemo } from '@/lib/demo-registry';
-import { DemoView } from '@/components/demo-view';
-import { FluidTrail } from './fluid';
 
 const demo = findDemo('fluid-pricing-cursor')!;
 
@@ -57,110 +55,14 @@ const TIER_BORDER_ACTIVE: Record<TierId, string> = {
 // ── Root component ────────────────────────────────────────────────────────────
 
 export default function FluidPricingCursor() {
-  const pageRef = useRef<HTMLDivElement>(null);
-
-  // Shared refs — updated via DOM events, read in useFrame. No re-renders.
-  const hoveredTierRef = useRef<string>('neutral');
-  const pointerRef = useRef<{ x: number; y: number }>({ x: 0.5, y: 0.5 });
-  const velocityRef = useRef<number>(0);
-
-  const lastPosRef = useRef({ x: 0.5, y: 0.5 });
-  const lastTimeRef = useRef(performance.now());
-  const rafRef = useRef<number>(0);
-  const rawVelRef = useRef(0);
-
-  // Track which tier card is hovered (React state for visual feedback)
+  // Track which tier card is hovered — drives the card/table highlight.
   const [hoveredTier, setHoveredTier] = useState<TierId | null>(null);
 
-  // ── Pointer tracking ──────────────────────────────────────────────────────
-
-  useEffect(() => {
-    const page = pageRef.current;
-    if (!page) return;
-
-    // Touch-only devices have no hover cursor — the fluid trail would never
-    // light up. Drive an autonomous orbit when (hover: none) so visitors on
-    // mobile still see the effect.
-    const isTouchOnly =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(hover: none) and (pointer: coarse)').matches;
-
-    const onMove = (e: PointerEvent) => {
-      const rect = page.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-
-      const now = performance.now();
-      const dt = Math.max(now - lastTimeRef.current, 1);
-      const dx = x - lastPosRef.current.x;
-      const dy = y - lastPosRef.current.y;
-      const speed = Math.sqrt(dx * dx + dy * dy) / (dt / 1000);
-
-      rawVelRef.current = Math.min(speed * 0.8, 1.0);
-      lastPosRef.current = { x, y };
-      lastTimeRef.current = now;
-
-      pointerRef.current = { x, y };
-    };
-
-    const autoStart = performance.now();
-    const tick = () => {
-      // Auto-orbit fallback for touch — slow Lissajous figure across the page,
-      // injects synthetic velocity so the trail keeps swirling. Real touch
-      // input wins because onMove overwrites lastPosRef on every event.
-      if (isTouchOnly) {
-        const t = (performance.now() - autoStart) / 1000;
-        const x = 0.5 + 0.32 * Math.sin(t * 0.6);
-        const y = 0.5 + 0.22 * Math.sin(t * 0.42 + 1.3);
-        const dx = x - lastPosRef.current.x;
-        const dy = y - lastPosRef.current.y;
-        rawVelRef.current = Math.min(Math.sqrt(dx * dx + dy * dy) * 60, 0.6);
-        lastPosRef.current = { x, y };
-        pointerRef.current = { x, y };
-      }
-      velocityRef.current += (rawVelRef.current - velocityRef.current) * 0.15;
-      rawVelRef.current *= 0.88;
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    page.addEventListener('pointermove', onMove, { passive: true });
-    rafRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      page.removeEventListener('pointermove', onMove);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  // ── Tier hover handlers ───────────────────────────────────────────────────
-
-  const handleTierEnter = useCallback((tier: TierId) => {
-    hoveredTierRef.current = tier;
-    setHoveredTier(tier);
-  }, []);
-
-  const handleTierLeave = useCallback(() => {
-    hoveredTierRef.current = 'neutral';
-    setHoveredTier(null);
-  }, []);
+  const handleTierEnter = useCallback((tier: TierId) => setHoveredTier(tier), []);
+  const handleTierLeave = useCallback(() => setHoveredTier(null), []);
 
   return (
-    <div ref={pageRef} className="relative min-h-dvh px-6 pb-32 pt-28 md:px-12">
-
-      {/* ── Full-bleed fluid trail overlay ─────────────────────────────────── */}
-      {/* pointer-events:none so the DOM stays interactive */}
-      <DemoView
-        className="pointer-events-none fixed inset-0 h-full w-full"
-        style={{ zIndex: 0 }}
-      >
-        <FluidTrail
-          hoveredTierRef={hoveredTierRef}
-          pointerRef={pointerRef}
-          velocityRef={velocityRef}
-        />
-      </DemoView>
-
-      {/* ── Page content (sits above the trail) ────────────────────────────── */}
+    <div className="relative min-h-dvh px-6 pb-32 pt-28 md:px-12">
       <div className="relative z-10">
 
         {/* Header */}
@@ -323,7 +225,7 @@ export default function FluidPricingCursor() {
         {/* Footer */}
         <footer className="mx-auto mt-24 max-w-6xl border-t border-white/5 pt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
           <p>
-            Demo 07 · GPU fluid trail + tier-aware color shift.{' '}
+            Demo 07 · Tier-aware hover highlighting across cards + comparison table.{' '}
             <Link href="/" className="text-[var(--color-accent)] underline-offset-4 hover:underline">
               ← Back to the lab
             </Link>

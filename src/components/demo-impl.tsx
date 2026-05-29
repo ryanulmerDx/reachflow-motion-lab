@@ -73,13 +73,10 @@ const IMPLS: Readonly<Record<string, DemoComponent>> = {
  * that any device can handle.
  */
 const GATED_SLUGS = new Set([
-  'fluid-pricing-cursor',
   'automation-pipeline',
 ]);
 
 const BYPASS_COPY: Record<string, string> = {
-  'fluid-pricing-cursor':
-    'A WebGL pheromone trail follows your cursor across the pricing tiers.',
   'automation-pipeline':
     'Hundreds of GPU-instanced particles flow through a workflow graph.',
 };

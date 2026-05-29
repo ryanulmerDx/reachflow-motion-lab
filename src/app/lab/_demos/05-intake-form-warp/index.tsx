@@ -2,13 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import { Color, Vector2, type ShaderMaterial } from 'three';
-import { DemoView } from '@/components/demo-view';
-import { useUniforms } from '@/lib/uniforms';
 import { findDemo } from '@/lib/demo-registry';
 import { FluidProgress } from './progress';
-import { fragmentShader, vertexShader } from './shader';
 
 const demo = findDemo('intake-form-warp')!;
 
@@ -45,7 +40,7 @@ export default function IntakeFormWarp() {
     context: '',
   });
 
-  // Scroll-velocity tracking — shared with DemoViews and FluidProgress
+  // Scroll-velocity tracking — drives the fluid SVG progress indicator
   const rawVelRef = useRef(0);
   const smoothVelRef = useRef(0);
   const lastYRef = useRef(0);
@@ -154,11 +149,7 @@ export default function IntakeFormWarp() {
         title="What are you building?"
         setRef={setStepRef(0)}
       >
-        <WarpedHeader
-          text="Project type."
-          velocityRef={smoothVelRef}
-          tint="#67e8f9"
-        />
+        <WarpedHeader text="Project type." tint="#67e8f9" />
         <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {(
             [
@@ -193,11 +184,7 @@ export default function IntakeFormWarp() {
         title="What's the budget?"
         setRef={setStepRef(1)}
       >
-        <WarpedHeader
-          text="Budget range."
-          velocityRef={smoothVelRef}
-          tint="#a78bfa"
-        />
+        <WarpedHeader text="Budget range." tint="#a78bfa" />
         <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {(
             [
@@ -231,11 +218,7 @@ export default function IntakeFormWarp() {
         title="When do you need it?"
         setRef={setStepRef(2)}
       >
-        <WarpedHeader
-          text="Timeline."
-          velocityRef={smoothVelRef}
-          tint="#34d399"
-        />
+        <WarpedHeader text="Timeline." tint="#34d399" />
         <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {(
             [
@@ -269,11 +252,7 @@ export default function IntakeFormWarp() {
         title="Where should Ryan reply?"
         setRef={setStepRef(3)}
       >
-        <WarpedHeader
-          text="Your details."
-          velocityRef={smoothVelRef}
-          tint="#f59e0b"
-        />
+        <WarpedHeader text="Your details." tint="#f59e0b" />
         <div className="mt-8 space-y-5 max-w-xl">
           <Field
             label="Name"
@@ -326,11 +305,7 @@ export default function IntakeFormWarp() {
         title="You're all set."
         setRef={setStepRef(4)}
       >
-        <WarpedHeader
-          text="Done."
-          velocityRef={smoothVelRef}
-          tint="#67e8f9"
-        />
+        <WarpedHeader text="Done." tint="#67e8f9" />
         <div className="mt-8 rounded-2xl border border-white/5 bg-white/[0.02] p-8 max-w-xl">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-accent)]">
             Got it
@@ -361,7 +336,7 @@ export default function IntakeFormWarp() {
 
       <footer className="mx-auto mt-32 max-w-3xl border-t border-white/5 pt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
         <p>
-          Demo 05 · Scroll-velocity shader warp + fluid SVG progress.{' '}
+          Demo 05 · Multi-step intake + fluid SVG progress.{' '}
           <Link href="/" className="text-[var(--color-accent)] underline-offset-4 hover:underline">
             ← Back to the lab
           </Link>
@@ -402,78 +377,28 @@ function StepSection({
 // ─── WarpedHeader ────────────────────────────────────────────────────────────
 
 /**
- * Large display text with a fragment-shader backdrop that warps with
- * scroll velocity. The DemoView rect tracks this DOM element via a
- * ref — identical pattern to demo 03.
+ * Large display text on a clean, static tinted panel. (Previously a live
+ * fragment shader warped the backdrop with scroll velocity, but the constant
+ * motion read as distracting — the header is now a calm, fixed surface and the
+ * fluid SVG progress carries the motion.)
  */
-function WarpedHeader({
-  text,
-  velocityRef,
-  tint,
-}: {
-  text: string;
-  velocityRef: React.RefObject<number>;
-  tint: string;
-}) {
+function WarpedHeader({ text, tint }: { text: string; tint: string }) {
   return (
-    <div className="relative mt-6 overflow-hidden rounded-2xl">
-      {/* Shader region — sits behind the text */}
-      <DemoView className="absolute inset-0 h-full w-full">
-        <HeaderShaderMesh velocityRef={velocityRef} tint={tint} />
-      </DemoView>
-      {/* Text floats above the shader */}
+    <div className="relative mt-6 overflow-hidden rounded-2xl border border-white/5 bg-white/[0.015]">
+      {/* Static tinted wash — subtle, does not animate */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(130% 150% at 0% 0%, ${tint}1f, transparent 62%)`,
+        }}
+      />
       <div className="relative z-10 px-6 py-8 md:px-10 md:py-10">
         <span className="font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-none tracking-tight text-white/90">
           {text}
         </span>
       </div>
     </div>
-  );
-}
-
-// ─── HeaderShaderMesh ────────────────────────────────────────────────────────
-
-/**
- * R3F mesh that drives the header backdrop shader.
- * Reads smoothed velocity from the shared ref each frame — no React state,
- * no re-renders, just uniform mutation in useFrame.
- */
-function HeaderShaderMesh({
-  velocityRef,
-  tint,
-}: {
-  velocityRef: React.RefObject<number>;
-  tint: string;
-}) {
-  const matRef = useRef<ShaderMaterial>(null);
-  const { size, viewport } = useThree();
-
-  const uniforms = useUniforms({
-    uTime: 0,
-    uResolution: new Vector2(size.width, size.height),
-    uVelocity: 0,
-    uTint: new Color(tint),
-  });
-
-  useFrame(({ clock }) => {
-    if (!matRef.current) return;
-    uniforms.uTime.value = clock.elapsedTime;
-    uniforms.uResolution.value.set(size.width, size.height);
-    uniforms.uVelocity.value = velocityRef.current ?? 0;
-  });
-
-  // Scale a unit plane to the View's world-space viewport so the shader
-  // fills the tracked DOM rect under the global perspective camera.
-  return (
-    <mesh scale={[viewport.width, viewport.height, 1]}>
-      <planeGeometry args={[1, 1]} />
-      <shaderMaterial
-        ref={matRef}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-      />
-    </mesh>
   );
 }
 

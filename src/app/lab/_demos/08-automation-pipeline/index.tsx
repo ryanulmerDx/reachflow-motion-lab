@@ -13,7 +13,7 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import Link from 'next/link';
 import { DemoView } from '@/components/demo-view';
@@ -179,7 +179,7 @@ interface WorkflowSceneProps {
 function WorkflowScene({ velocityRef, hitTimesRef, onNodeHit }: WorkflowSceneProps) {
   return (
     <>
-      <CameraRig velocityRef={velocityRef} />
+      <CameraRig />
       <NodeGraph hitTimesRef={hitTimesRef} />
       <Particles velocityRef={velocityRef} onNodeHit={onNodeHit} />
       {/* Ambient fill so dark geometry is visible */}
@@ -190,8 +190,8 @@ function WorkflowScene({ velocityRef, hitTimesRef, onNodeHit }: WorkflowScenePro
 
 // ─── CameraRig ────────────────────────────────────────────────────────────────
 
-function CameraRig({ velocityRef }: { velocityRef: React.RefObject<number> }) {
-  const { camera, size } = useThree();
+function CameraRig() {
+  const { size } = useThree();
 
   // Graph spans ~7.2 world units wide; with padding we want 8 to fit. Compute
   // the minimum camera Z that fits the horizontal span for the current aspect
@@ -202,17 +202,9 @@ function CameraRig({ velocityRef }: { velocityRef: React.RefObject<number> }) {
   const fitZ = 4 / Math.tan(halfFovX); // distance to fit ±4 horizontal
   const baseZ = Math.max(5.5, fitZ);
 
-  useFrame(() => {
-    const vel = velocityRef.current ?? 0;
-    // Very subtle z-drift on scroll — kept small so the graph stays put
-    // instead of lurching with the page.
-    const targetZ = baseZ + Math.abs(vel) * 0.18;
-    camera.position.z += (targetZ - camera.position.z) * 0.06;
-    // Barely-there y-tilt
-    camera.position.y += (vel * -0.03 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, 0);
-  });
-
+  // Camera is fully static — the graph no longer drifts with scroll. Particle
+  // speed still responds to scroll velocity (see Particles), but the layout
+  // stays put. The default perspective camera looks down -Z toward the origin.
   return <PerspectiveCamera makeDefault position={[0, 0, baseZ]} fov={50} />;
 }
 
