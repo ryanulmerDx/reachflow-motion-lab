@@ -25,6 +25,7 @@ export function CustomCursor() {
   const targetRef = useRef({ x: -120, y: -120 });
   const rafRef = useRef<number>(0);
   const isDownRef = useRef(false);
+  const visibleRef = useRef(false);
   const [shape, setShape] = useState<CursorShape>({ kind: 'default' });
   const [pressed, setPressed] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -37,7 +38,10 @@ export function CustomCursor() {
     if (!el) return;
 
     const onMove = (e: PointerEvent) => {
-      if (!visible) setVisible(true);
+      if (!visibleRef.current) {
+        visibleRef.current = true;
+        setVisible(true);
+      }
       targetRef.current = { x: e.clientX, y: e.clientY };
 
       // Traverse up from target to find the nearest data-cursor attribute
@@ -64,8 +68,14 @@ export function CustomCursor() {
       setPressed(false);
     };
 
-    const onLeave = () => setVisible(false);
-    const onEnter = () => setVisible(true);
+    const onLeave = () => {
+      visibleRef.current = false;
+      setVisible(false);
+    };
+    const onEnter = () => {
+      visibleRef.current = true;
+      setVisible(true);
+    };
 
     const LERP = 0.18;
 
@@ -100,7 +110,7 @@ export function CustomCursor() {
       document.documentElement.removeEventListener('mouseenter', onEnter);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [visible]);
+  }, []);
 
   // On touch — render nothing
   if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
