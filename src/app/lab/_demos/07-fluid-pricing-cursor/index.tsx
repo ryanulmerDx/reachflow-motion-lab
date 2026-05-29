@@ -201,27 +201,6 @@ export default function FluidPricingCursor() {
           </div>
         </section>
 
-        {/* ── Social proof strip ───────────────────────────────────────────── */}
-        <section className="mx-auto mt-24 max-w-6xl">
-          <div className="grid gap-6 md:grid-cols-3">
-            <Testimonial
-              quote="Switched from Calendly in an afternoon. Our no-show rate dropped 40% in the first month."
-              name="Mara T."
-              role="Owner, Cedar & Sun Studio"
-            />
-            <Testimonial
-              quote="The automations alone saved my ops manager six hours a week. We scaled from 2 to 8 locations without adding headcount."
-              name="James R."
-              role="Director, Atlas Hardware Group"
-            />
-            <Testimonial
-              quote="Studio tier was a no-brainer. The success engineer helped us migrate 3 years of data in two days."
-              name="Priya N."
-              role="CTO, Linden Group"
-            />
-          </div>
-        </section>
-
         {/* Footer */}
         <footer className="mx-auto mt-24 max-w-6xl border-t border-white/5 pt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
           <p>
@@ -398,31 +377,5 @@ function FeatureCell({
         />
       )}
     </td>
-  );
-}
-
-// ── Testimonial ───────────────────────────────────────────────────────────────
-
-function Testimonial({
-  quote,
-  name,
-  role,
-}: {
-  quote: string;
-  name: string;
-  role: string;
-}) {
-  return (
-    <blockquote className="rounded-2xl border border-white/5 p-6">
-      <p className="text-sm text-[var(--color-ink-dim)] leading-relaxed">
-        &ldquo;{quote}&rdquo;
-      </p>
-      <footer className="mt-4">
-        <p className="text-sm font-medium text-[var(--color-ink)]">{name}</p>
-        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-ink-dim)]">
-          {role}
-        </p>
-      </footer>
-    </blockquote>
   );
 }

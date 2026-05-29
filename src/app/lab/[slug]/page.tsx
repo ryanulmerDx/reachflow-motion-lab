@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { DEMOS, findDemo } from '@/lib/demo-registry';
 import { hasDemoImpl } from '@/lib/demo-impls';
 import { DemoImpl } from '@/components/demo-impl';
+import { DemoNav } from '@/components/demo-nav';
 import { SITE } from '@/lib/site';
 
 type Params = { slug: string };
@@ -35,7 +36,14 @@ export default async function DemoPage({ params }: { params: Promise<Params> }) 
   const demo = findDemo(slug);
   if (!demo) notFound();
 
-  if (hasDemoImpl(slug)) return <DemoImpl slug={slug} />;
+  if (hasDemoImpl(slug)) {
+    return (
+      <>
+        <DemoImpl slug={slug} />
+        <DemoNav slug={slug} />
+      </>
+    );
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col justify-center px-6 py-32">

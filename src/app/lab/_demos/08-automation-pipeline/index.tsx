@@ -8,11 +8,10 @@
  * edges. At the Score node particles fork: 70 % to Slack (cyan), 30 % to
  * Drip (amber). Node halos pulse on particle arrival.
  *
- * Scroll velocity modulates particle speed via the same ref-sharing pattern
- * as demo-05, but applied inside the R3F scene instead of a shader uniform.
+ * The camera and particle speed are static — nothing reacts to scroll.
  */
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import Link from 'next/link';
@@ -27,44 +26,9 @@ const demo = findDemo('automation-pipeline')!;
 // ─── Root component ───────────────────────────────────────────────────────────
 
 export default function AutomationPipeline() {
-  // Scroll velocity — shared between the DOM scroll listener and the R3F scene
-  const rawVelRef = useRef(0);
-  const smoothVelRef = useRef(0);
-  const lastYRef = useRef(0);
-  const lastTRef = useRef(performance.now());
-  const rafRef = useRef<number>(0);
-
   // Per-node last-hit timestamps (clock.elapsedTime) — written by particle
   // arrivals in the R3F loop, read by node halos and the panel row highlighter
   const hitTimesRef = useRef<Record<string, number>>({});
-
-  // Velocity tracking loop (mirrors demo-05 pattern)
-  useEffect(() => {
-    lastYRef.current = window.scrollY;
-    lastTRef.current = performance.now();
-
-    const onScroll = () => {
-      const now = performance.now();
-      const dy = window.scrollY - lastYRef.current;
-      const dt = Math.max(now - lastTRef.current, 1);
-      rawVelRef.current = Math.max(-1, Math.min(1, dy / dt / 3));
-      lastYRef.current = window.scrollY;
-      lastTRef.current = now;
-    };
-
-    const tick = () => {
-      smoothVelRef.current += (rawVelRef.current - smoothVelRef.current) * 0.12;
-      rawVelRef.current *= 0.88;
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
 
   // Called by the particle system each time a particle reaches a node.
   // Stores wall-clock seconds (performance.now()/1000) so both the node
@@ -104,11 +68,7 @@ export default function AutomationPipeline() {
             {/* R3F DemoView region */}
             <div className="relative h-[42vh] min-h-[280px] sm:h-[50vh] sm:min-h-[320px] overflow-hidden rounded-2xl border border-white/5">
               <DemoView className="absolute inset-0 h-full w-full">
-                <WorkflowScene
-                  velocityRef={smoothVelRef}
-                  hitTimesRef={hitTimesRef}
-                  onNodeHit={handleNodeHit}
-                />
+                <WorkflowScene hitTimesRef={hitTimesRef} onNodeHit={handleNodeHit} />
               </DemoView>
             </div>
 
@@ -171,17 +131,16 @@ export default function AutomationPipeline() {
  */
 
 interface WorkflowSceneProps {
-  velocityRef: React.RefObject<number>;
   hitTimesRef: React.RefObject<Record<string, number>>;
   onNodeHit: (nodeId: string) => void;
 }
 
-function WorkflowScene({ velocityRef, hitTimesRef, onNodeHit }: WorkflowSceneProps) {
+function WorkflowScene({ hitTimesRef, onNodeHit }: WorkflowSceneProps) {
   return (
     <>
       <CameraRig />
       <NodeGraph hitTimesRef={hitTimesRef} />
-      <Particles velocityRef={velocityRef} onNodeHit={onNodeHit} />
+      <Particles onNodeHit={onNodeHit} />
       {/* Ambient fill so dark geometry is visible */}
       <ambientLight intensity={0.15} />
     </>

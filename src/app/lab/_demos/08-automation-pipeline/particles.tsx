@@ -9,8 +9,7 @@
  *   per-frame allocation on the hot path.
  * - Fork routing uses weighted random at emission time so the 70/30 split is
  *   visible statistically across hundreds of particles.
- * - velocityRef is read each frame to modulate speed via scroll interaction,
- *   mirroring the demo-05 pattern.
+ * - Particles flow at a constant speed — independent of scroll.
  */
 
 import { useRef, useMemo, useEffect } from 'react';
@@ -85,13 +84,12 @@ function initParticle(i: number, stagger: number) {
 // ─── Props ───────────────────────────────────────────────────────────────────
 
 interface ParticlesProps {
-  velocityRef: React.RefObject<number>;
   onNodeHit: (nodeId: string) => void;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function Particles({ velocityRef, onNodeHit }: ParticlesProps) {
+export function Particles({ onNodeHit }: ParticlesProps) {
   const meshRef = useRef<InstancedMesh>(null);
 
   // Geometry and material — stable references, never recreated.
@@ -113,9 +111,8 @@ export function Particles({ velocityRef, onNodeHit }: ParticlesProps) {
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    // Scroll velocity modulates speed slightly
-    const vel = velocityRef.current ?? 0;
-    const speed = PARTICLE_SPEED * (1 + Math.abs(vel) * 1.5);
+    // Constant flow — particles are no longer affected by scroll.
+    const speed = PARTICLE_SPEED;
     const dt = Math.min(delta, 0.05); // cap delta to avoid big jumps
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
