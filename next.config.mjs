@@ -45,6 +45,13 @@ const nextConfig = {
     });
     return config;
   },
+  async redirects() {
+    // Demos 09 and 10 were rebuilt under new slugs; keep old links alive.
+    return [
+      { source: '/lab/data-tunnel', destination: '/lab/voice-receptionist', permanent: true },
+      { source: '/lab/inventory-physics', destination: '/lab/field-inventory', permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
