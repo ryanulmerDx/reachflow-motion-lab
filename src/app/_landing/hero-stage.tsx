@@ -1,8 +1,9 @@
 'use client';
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef } from 'react';
 import { Color, Vector2, type OrthographicCamera, type ShaderMaterial } from 'three';
+import { OrthoShaderCanvas } from '@/components/ortho-shader-canvas';
 import { useUniforms } from '@/lib/uniforms';
 import { fragmentShader, vertexShader } from './hero-shader';
 
@@ -13,18 +14,14 @@ import { fragmentShader, vertexShader } from './hero-shader';
  * which scissor-clips drei <View> children at a fixed distance — that
  * causes a 2x2 full-screen quad to render as a small center patch.
  * Here we mount a self-contained ortho Canvas locked to NDC so the
- * full-bleed shader actually fills the hero rect.
+ * full-bleed shader actually fills the hero rect. Frameloop/dpr gating
+ * (static on mobile) lives in OrthoShaderCanvas.
  */
 export function HeroStage() {
   return (
-    <Canvas
-      orthographic
-      camera={{ position: [0, 0, 1], near: 0, far: 2, zoom: 1 }}
-      gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
-      dpr={[1, 2]}
-    >
+    <OrthoShaderCanvas>
       <HeroShaderMesh />
-    </Canvas>
+    </OrthoShaderCanvas>
   );
 }
 
