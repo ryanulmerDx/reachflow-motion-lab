@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { LenisProvider } from '@/components/lenis-provider';
 import { GlobalCanvasMount } from '@/components/canvas-mount';
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GlobalCanvasMount />
           <div className="relative z-10">{children}</div>
         </LenisProvider>
+        <Analytics />
       </body>
     </html>
   );
