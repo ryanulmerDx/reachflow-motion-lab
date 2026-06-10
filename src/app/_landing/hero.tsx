@@ -82,7 +82,7 @@ export function LandingHero() {
       >
         <span>{SITE.studio.name}</span>
         <span className="hidden md:inline">
-          Lat 38.42° / Lon −82.96°  ·  Stack: R3F · GLSL · GSAP
+          Lat 34.43° / Lon −110.59°  ·  Stack: R3F · GLSL · GSAP
         </span>
         <span>{SITE.studio.contact}</span>
       </div>
