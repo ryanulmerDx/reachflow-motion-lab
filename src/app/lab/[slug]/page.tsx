@@ -23,6 +23,8 @@ export async function generateMetadata({
   return {
     title: demo.title,
     description: demo.tagline,
+    // Override the root layout's canonical, which points every page at the home page.
+    alternates: { canonical: `/lab/${demo.slug}` },
     openGraph: {
       title: `${demo.title} — ${SITE.shortName}`,
       description: demo.tagline,
